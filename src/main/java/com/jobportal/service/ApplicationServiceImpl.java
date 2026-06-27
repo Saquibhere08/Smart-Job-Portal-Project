@@ -6,7 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jobportal.entity.Application;
+import com.jobportal.entity.Job;
+import com.jobportal.entity.User;
 import com.jobportal.repository.ApplicationRepository;
+import com.jobportal.repository.JobRepository;
+import com.jobportal.repository.UserRepository;
 
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
@@ -14,8 +18,26 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     private ApplicationRepository applicationRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private JobRepository jobRepository;
+
     @Override
     public Application saveApplication(Application application) {
+
+        User user = userRepository
+                .findById(application.getUser().getId())
+                .orElse(null);
+
+        Job job = jobRepository
+                .findById(application.getJob().getId())
+                .orElse(null);
+
+        application.setUser(user);
+        application.setJob(job);
+
         return applicationRepository.save(application);
     }
 
@@ -30,16 +52,23 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Application updateApplication(Long id,
-                                         Application application) {
+    public Application updateApplication(Long id, Application application) {
 
         Application existingApplication =
                 applicationRepository.findById(id).orElse(null);
 
         if (existingApplication != null) {
 
-            existingApplication.setUserId(application.getUserId());
-            existingApplication.setJobId(application.getJobId());
+            User user = userRepository
+                    .findById(application.getUser().getId())
+                    .orElse(null);
+
+            Job job = jobRepository
+                    .findById(application.getJob().getId())
+                    .orElse(null);
+
+            existingApplication.setUser(user);
+            existingApplication.setJob(job);
             existingApplication.setStatus(application.getStatus());
 
             return applicationRepository.save(existingApplication);
@@ -49,13 +78,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public String deleteApplication(Long id) {
+    public void deleteApplication(Long id) {
+        applicationRepository.deleteById(id);
+    }
 
-        if (applicationRepository.existsById(id)) {
-            applicationRepository.deleteById(id);
-            return "Application Deleted Successfully";
-        }
+    @Override
+    public List<Application> getApplicationsByUser(Long userId) {
+        return applicationRepository.findByUserId(userId);
+    }
 
-        return "Application Not Found";
+    @Override
+    public List<Application> getApplicationsByJob(Long jobId) {
+        return applicationRepository.findByJobId(jobId);
     }
 }

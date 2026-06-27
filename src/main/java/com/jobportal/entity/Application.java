@@ -10,13 +10,24 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    private Long jobId;
+    @ManyToOne
+    @JoinColumn(name = "job_id")
+    private Job job;
 
     private String status;
 
     public Application() {
+    }
+
+    public Application(Long id, User user, Job job, String status) {
+        this.id = id;
+        this.user = user;
+        this.job = job;
+        this.status = status;
     }
 
     public Long getId() {
@@ -27,20 +38,20 @@ public class Application {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Long getJobId() {
-        return jobId;
+    public Job getJob() {
+        return job;
     }
 
-    public void setJobId(Long jobId) {
-        this.jobId = jobId;
+    public void setJob(Job job) {
+        this.job = job;
     }
 
     public String getStatus() {

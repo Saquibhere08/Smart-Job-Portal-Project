@@ -39,14 +39,29 @@ public class ApplicationController {
             @PathVariable Long id,
             @RequestBody Application application) {
 
-        return applicationService.updateApplication(id,
-                application);
+        return applicationService.updateApplication(id, application);
     }
 
     @DeleteMapping("/{id}")
     public String deleteApplication(
             @PathVariable Long id) {
 
-        return applicationService.deleteApplication(id);
+        applicationService.deleteApplication(id);
+
+        return "Application Deleted Successfully";
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<Application> getApplicationsByUser(
+            @PathVariable Long userId) {
+
+        return applicationService.getApplicationsByUser(userId);
+    }
+
+    @GetMapping("/job/{jobId}")
+    public List<Application> getApplicationsByJob(
+            @PathVariable Long jobId) {
+
+        return applicationService.getApplicationsByJob(jobId);
     }
 }
